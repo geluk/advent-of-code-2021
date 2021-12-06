@@ -1,7 +1,7 @@
 module Common where
 
-import System.IO
 import Data.Functor
+import System.IO
 
 type FileProcessor a = [String] -> a
 
@@ -20,4 +20,4 @@ readWithFile :: FileProcessor a -> Handle -> IO a
 readWithFile fp handle = hGetContents' handle <&> lines <&> fp
 
 parseContent :: Read a => String -> [a]
-parseContent content = read <$> lines content
+parseContent = fmap read . lines
