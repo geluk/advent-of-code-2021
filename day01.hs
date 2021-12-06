@@ -1,12 +1,15 @@
 import Common
+import Data.Functor
 
 -- Part 1
+result1 :: IO Int
 result1 = processDay "01" implPart1
 
-implPart1 :: [String] -> IO ()
-implPart1 lines = do
-    let numbers = read <$> lines
-    print $ countIncreases numbers
+implPart1 :: [String] -> Int
+implPart1 = countIncreases . readLines
+
+readLines :: [String] -> [Int]
+readLines lines = read <$> lines
 
 countIncreases :: [Int] -> Int
 countIncreases = sum . identifyIncreases
@@ -23,10 +26,8 @@ isIncrease l r
 -- Part 2
 result2 = processDay "01" implPart2
 
-implPart2 :: [String] -> IO ()
-implPart2 lines = do
-    let numbers = read <$> lines
-    print $ countAverageIncreases numbers
+implPart2 :: [String] -> Int
+implPart2 = countAverageIncreases . readLines
 
 countAverageIncreases :: [Int] -> Int
 countAverageIncreases = countIncreases . makeAverages

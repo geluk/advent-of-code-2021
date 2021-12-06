@@ -10,13 +10,10 @@ data Command
 
 type Position = (Int, Int) -- (x, y)
 
-result1 = processDay "02" $ runWithEvaluator part1Evaluator
+result1 = processDay "02" part1Evaluator
 
-part1Evaluator :: [Command] -> Int
-part1Evaluator = multTuple . foldCommands
-
-runWithEvaluator :: ([Command] -> Int) -> [String] -> IO ()
-runWithEvaluator f = print . f . parseCommands
+part1Evaluator :: [String] -> Int
+part1Evaluator = multTuple . foldCommands . parseCommands
 
 multTuple :: (Int, Int) -> Int
 multTuple (x, y) = x * y
@@ -42,10 +39,10 @@ up = Down . negate
 -- Part 2
 type AimPosition = (Int, Int, Int) -- (x, y, aim)
 
-result2 = processDay "02" $ runWithEvaluator part2Evaluator
+result2 = processDay "02" part2Evaluator
 
-part2Evaluator :: [Command] -> Int
-part2Evaluator = multAimPos . foldWithAim
+part2Evaluator :: [String] -> Int
+part2Evaluator = multAimPos . foldWithAim . parseCommands
 
 multAimPos :: (Int, Int, Int) -> Int
 multAimPos (x, y, _) = x * y
