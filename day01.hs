@@ -9,19 +9,20 @@ implPart1 :: [String] -> Int
 implPart1 = countIncreases . readLines
 
 readLines :: [String] -> [Int]
-readLines lines = read <$> lines
+readLines = fmap read
 
 countIncreases :: [Int] -> Int
 countIncreases = sum . identifyIncreases
 
 identifyIncreases :: [Int] -> [Int]
 identifyIncreases depths = zipWith isIncrease depths next
-    where _:next = depths
+  where
+    _ : next = depths
 
 isIncrease :: Int -> Int -> Int
 isIncrease l r
-    | l < r = 1
-    | otherwise = 0
+  | l < r = 1
+  | otherwise = 0
 
 -- Part 2
 result2 = processDay "01" implPart2
@@ -34,9 +35,9 @@ countAverageIncreases = countIncreases . makeAverages
 
 makeAverages :: [Int] -> [Int]
 makeAverages depths = zipWith3 sumThree depths tdepths ttdepths
-    where
-        tdepths = tail depths
-        ttdepths = tail . tail $ depths
+  where
+    tdepths = tail depths
+    ttdepths = tail . tail $ depths
 
 sumThree :: Int -> Int -> Int -> Int
 sumThree x y z = x + y + z
