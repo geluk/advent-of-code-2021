@@ -5,7 +5,7 @@ import System.IO
 type FileProcessor = [String] -> IO ()
 
 processDay :: String -> FileProcessor -> IO ()
-processDay day = readInput (getFileForDay day)
+processDay = readInput . getFileForDay
 
 printDay day = processDay day print
 
