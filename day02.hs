@@ -8,22 +8,25 @@ data Command
     | Down Int
     deriving (Show)
 
-type Position = (Int, Int)
+type Position = (Int, Int) -- (x, y)
 
-result1 = processDay "02" implDay2part1
+result1 = processDay "02" $ runWithEvaluator part1Evaluator
 
-implDay2part1 :: [String] -> IO ()
-implDay2part1 = print . multTuple . foldCommands . parseCommands
+part1Evaluator :: [Command] -> Int
+part1Evaluator = multTuple . foldCommands
+
+runWithEvaluator :: ([Command] -> Int) -> [String] -> IO ()
+runWithEvaluator f = print . f . parseCommands
 
 multTuple :: (Int, Int) -> Int
 multTuple (x, y) = x * y
 
 foldCommands :: [Command] -> Position
-foldCommands = foldl foldFunc (0, 0)
+foldCommands = foldl evaluateCommand (0, 0)
 
-foldFunc :: Position -> Command -> Position
-foldFunc (x, y) (Forward dx) = (x + dx, y)
-foldFunc (x, y) (Down dy) = (x, y + dy)
+evaluateCommand :: Position -> Command -> Position
+evaluateCommand (x, y) (Forward dx) = (x + dx, y)
+evaluateCommand (x, y) (Down dy) = (x, y + dy)
 
 parseCommands :: [String] -> [Command]
 parseCommands commands = parseCommand <$> commands
@@ -37,12 +40,12 @@ up :: Int -> Command
 up = Down . negate
 
 -- Part 2
--- (x, y, aim)
-type AimPosition = (Int, Int, Int)
+type AimPosition = (Int, Int, Int) -- (x, y, aim)
 
-result2 = processDay "02" implDay2part2
+result2 = processDay "02" $ runWithEvaluator part2Evaluator
 
-implDay2part2 = print . multAimPos . foldWithAim . parseCommands
+part2Evaluator :: [Command] -> Int
+part2Evaluator = multAimPos . foldWithAim
 
 multAimPos :: (Int, Int, Int) -> Int
 multAimPos (x, y, _) = x * y

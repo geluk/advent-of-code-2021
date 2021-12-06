@@ -1,11 +1,10 @@
 import Common
 
 -- Part 1
--- Should be 1564
-result1 = processDay "01" implDay1part1
+result1 = processDay "01" implPart1
 
-implDay1part1 :: [String] -> IO ()
-implDay1part1 lines = do
+implPart1 :: [String] -> IO ()
+implPart1 lines = do
     let numbers = read <$> lines
     print $ countIncreases numbers
 
@@ -22,11 +21,10 @@ isIncrease l r
     | otherwise = 0
 
 -- Part 2
--- Should be 1611
-result2 = processDay "01" implDay1part2
+result2 = processDay "01" implPart2
 
-implDay1part2 :: [String] -> IO ()
-implDay1part2 lines = do
+implPart2 :: [String] -> IO ()
+implPart2 lines = do
     let numbers = read <$> lines
     print $ countAverageIncreases numbers
 
@@ -41,13 +39,3 @@ makeAverages depths = zipWith3 sumThree depths tdepths ttdepths
 
 sumThree :: Int -> Int -> Int -> Int
 sumThree x y z = x + y + z
-
--- Previous implementation
-foldDepths :: [Int] -> Int
-foldDepths x = fst $ foldl foldFunc (0, 9999999) x
-
-foldFunc :: (Int, Int) -> Int -> (Int, Int)
-foldFunc (acc, prev) current
-    | current > prev = (acc + 1, current)
-    | otherwise = (acc, current)
-
