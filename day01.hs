@@ -6,10 +6,7 @@ result1 :: IO Int
 result1 = processDay "01" implPart1
 
 implPart1 :: [String] -> Int
-implPart1 = countIncreases . readLines
-
-readLines :: [String] -> [Int]
-readLines = fmap read
+implPart1 = countIncreases . fmap read
 
 countIncreases :: [Int] -> Int
 countIncreases = sum . identifyIncreases
@@ -28,7 +25,7 @@ isIncrease l r
 result2 = processDay "01" implPart2
 
 implPart2 :: [String] -> Int
-implPart2 = countAverageIncreases . readLines
+implPart2 = countAverageIncreases . fmap read
 
 countAverageIncreases :: [Int] -> Int
 countAverageIncreases = countIncreases . makeAverages
