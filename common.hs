@@ -1,5 +1,6 @@
 module Common where
 
+import Control.Monad (join)
 import Data.Functor
 import System.IO
 
@@ -8,7 +9,7 @@ type FileProcessor a = [String] -> a
 processDay :: String -> FileProcessor a -> IO a
 processDay = readInput . getFileForDay
 
-printDay day = processDay day print
+printDay day = join $ processDay day print
 
 getFileForDay :: String -> String
 getFileForDay day = "inputs\\day" ++ day ++ ".txt"
