@@ -16,9 +16,20 @@ type BingoBoard = Grid BingoNumber
 -- producing a score.
 type RoundOutcome = Either Int [BingoBoard]
 
+-- A strategy determines the outcome of a round, by choosing whether the game
+-- should continue. This will be relevant for part 2.
+type Strategy = [Either Int BingoBoard] -> RoundOutcome
+
 result1 = processDay "04" implPart1
 
-implPart1 (line : lines) = playBingo numbers boards
+result2 = processDay "04" implPart2
+
+implPart1 (line : lines) = playBingo tryToWin numbers boards
+  where
+    numbers = readNumbers line
+    boards = readBoards lines
+
+implPart2 (line : lines) = playBingo tryToLose numbers boards
   where
     numbers = readNumbers line
     boards = readBoards lines
@@ -35,14 +46,24 @@ readNumbers line = read <$> splitBy ',' line
 readBoard :: [[Int]] -> [[BingoNumber]]
 readBoard = gridMap Unmarked
 
-playBingo :: [Int] -> [BingoBoard] -> RoundOutcome
-playBingo [] boards = Right boards
-playBingo (n : ns) boards = playBingoRound n boards >>= playBingo ns
+playBingo :: Strategy -> [Int] -> [BingoBoard] -> RoundOutcome
+playBingo _ [] boards = Right boards
+playBingo strat (n : ns) boards = playBingoRound strat n boards >>= playBingo strat ns
 
-playBingoRound :: Int -> [BingoBoard] -> RoundOutcome
-playBingoRound number boards = sequence updatedBoards
+playBingoRound :: Strategy -> Int -> [BingoBoard] -> RoundOutcome
+playBingoRound strat number boards = strat updatedBoards
   where
     updatedBoards = updateBoard number <$> boards
+
+tryToWin :: Strategy
+tryToWin = sequence
+
+tryToLose :: Strategy
+tryToLose [Left score] = Left score
+tryToLose boards = sequence $ filter didNotWin boards
+  where
+    didNotWin (Right _) = True
+    didNotWin (Left _) = False
 
 updateBoard :: Int -> BingoBoard -> Either Int BingoBoard
 updateBoard number board =
