@@ -14,7 +14,7 @@ type RoundOutcome = Either Int [BingoBoard]
 
 -- Utility function
 readBoard :: [[Int]] -> [[BingoNumber]]
-readBoard = fmap $ fmap Unmarked
+readBoard = gridMap Unmarked
 
 playBingo :: [Int] -> [BingoBoard] -> RoundOutcome
 playBingo [] boards = Right boards
@@ -54,7 +54,7 @@ isWinningCoordinate board (x, y) = allMarked colX || allMarked rowY
     isMarked (Marked _) = True
 
 tryMark :: Int -> BingoBoard -> BingoBoard
-tryMark num = fmap $ fmap markFn
+tryMark num = gridMap markFn
   where
     markFn (Unmarked x) | x == num = Marked x
     markFn x = x
