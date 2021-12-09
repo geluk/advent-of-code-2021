@@ -1,3 +1,4 @@
+import Common
 import Data.List (elemIndex)
 import Data.Maybe (fromMaybe)
 import Grid
@@ -9,10 +10,28 @@ data BingoNumber
 
 type BingoBoard = Grid BingoNumber
 
--- left means a board won with the given score, right means the game continues
+-- Left means a board won with the given score, right means the game continues.
+-- Using the Either monad like this means we can bind the 'play round' function
+-- onto the game state repeatedly until it collapses into the left state,
+-- producing a score.
 type RoundOutcome = Either Int [BingoBoard]
 
--- Utility function
+result1 = processDay "04" implPart1
+
+implPart1 (line : lines) = playBingo numbers boards
+  where
+    numbers = readNumbers line
+    boards = readBoards lines
+
+readBoards :: [String] -> [BingoBoard]
+readBoards = fmap (readBoard . parseBoard) . filter (not . null) . splitBy []
+  where
+    parseBoard = fmap parseLine
+    parseLine = fmap read . filter (not . null) . splitBy ' '
+
+readNumbers :: String -> [Int]
+readNumbers line = read <$> splitBy ',' line
+
 readBoard :: [[Int]] -> [[BingoNumber]]
 readBoard = gridMap Unmarked
 
@@ -29,7 +48,7 @@ updateBoard :: Int -> BingoBoard -> Either Int BingoBoard
 updateBoard number board =
   let newBoard = tryMark number board
    in if wasWinningNumber number newBoard
-        then (Left . calculateScore) newBoard
+        then (Left . (* number) . calculateScore) newBoard
         else Right newBoard
 
 calculateScore :: BingoBoard -> Int

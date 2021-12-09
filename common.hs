@@ -22,3 +22,10 @@ readWithFile fp handle = hGetContents' handle <&> lines <&> fp
 
 parseContent :: Read a => String -> [a]
 parseContent = fmap read . lines
+
+splitBy :: (Foldable t, Eq a) => a -> t a -> [[a]]
+splitBy delimiter = foldr f [[]]
+  where
+    f c l@(x : xs)
+      | c == delimiter = [] : l
+      | otherwise = (c : x) : xs

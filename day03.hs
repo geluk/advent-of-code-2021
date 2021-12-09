@@ -11,6 +11,7 @@ type Report = [Bit]
 
 type AccumulatedReport = [Int]
 
+-- Part 1
 result1 = processDay "03" implPart1
 
 implPart1 lines =
@@ -51,7 +52,7 @@ foldReports = foldl accumulateReportBits $ repeat 0
     accumulateBit One = (+ 1)
     accumulateBit Zero = subtract 1
 
--- part 2
+-- Part 2
 result2 = processDay "03" implPart2
 
 implPart2 lines =
