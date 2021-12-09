@@ -26,7 +26,7 @@ fp :: (Eq a) => a -> Grid a -> Int -> [Coordinates]
 fp x [] _ = []
 fp x (row : rows) i = findInRow row ++ fp x rows (i + 1)
   where
-    findInRow row = zip (repeat i) (elemIndices x row)
+    findInRow row = zip (elemIndices x row) (repeat i)
 
 toCoordinates :: Int -> Int -> Coordinates
 toCoordinates x y = (x, y)

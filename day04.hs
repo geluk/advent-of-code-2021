@@ -17,20 +17,23 @@ readBoard :: [[Int]] -> [[BingoNumber]]
 readBoard = fmap $ fmap Unmarked
 
 playBingo :: [Int] -> [BingoBoard] -> RoundOutcome
-playBingo (n : ns) = Right
+playBingo [] boards = Right boards
+playBingo (n : ns) boards = playBingoRound n boards >>= playBingo ns
 
 playBingoRound :: Int -> [BingoBoard] -> RoundOutcome
 playBingoRound number boards = sequence updatedBoards
   where
-    updatedBoards = fmap updateBoard boards
-    updateBoard board =
-      let newBoard = tryMark number board
-       in if wasWinningNumber number newBoard
-            then (Left . calculateScore) newBoard
-            else Right newBoard
+    updatedBoards = updateBoard number <$> boards
+
+updateBoard :: Int -> BingoBoard -> Either Int BingoBoard
+updateBoard number board =
+  let newBoard = tryMark number board
+   in if wasWinningNumber number newBoard
+        then (Left . calculateScore) newBoard
+        else Right newBoard
 
 calculateScore :: BingoBoard -> Int
-calculateScore board = sum $ fmap sum scoreGrid
+calculateScore board = sum $ sum <$> scoreGrid
   where
     scoreGrid = gridMap scoreOfNumber board
     scoreOfNumber (Marked _) = 0
@@ -42,10 +45,10 @@ wasWinningNumber number board = maybe False (isWinningCoordinate board) maybeCoo
     maybeCoordinate = findFirstInGrid (Marked number) board
 
 isWinningCoordinate :: BingoBoard -> Coordinates -> Bool
-isWinningCoordinate board (x, y) = allMarked colX && allMarked colY
+isWinningCoordinate board (x, y) = allMarked colX || allMarked rowY
   where
     colX = column x board
-    colY = column y board
+    rowY = row y board
     allMarked = all isMarked
     isMarked (Unmarked _) = False
     isMarked (Marked _) = True
