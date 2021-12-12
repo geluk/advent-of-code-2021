@@ -2,6 +2,7 @@ module Common where
 
 import Control.Monad (join)
 import Data.Functor
+import Data.Text (pack, replace, unpack)
 import System.IO
 
 type FileProcessor a = [String] -> a
@@ -22,6 +23,9 @@ readWithFile fp handle = hGetContents' handle <&> lines <&> fp
 
 parseContent :: Read a => String -> [a]
 parseContent = fmap read . lines
+
+replaceString :: String -> String -> String -> String
+replaceString needle replacement = unpack . replace (pack needle) (pack replacement) . pack
 
 splitBy :: (Foldable t, Eq a) => a -> t a -> [[a]]
 splitBy delimiter = foldr f [[]]
