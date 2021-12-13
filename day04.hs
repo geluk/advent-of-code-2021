@@ -20,16 +20,12 @@ type RoundOutcome = Either Int [BingoBoard]
 -- should continue. This will be relevant for part 2.
 type Strategy = [Either Int BingoBoard] -> RoundOutcome
 
-result1 = processDay "04" implPart1
+result1 = processDay "04" $ impl tryToWin
 
-result2 = processDay "04" implPart2
+result2 = processDay "04" $ impl tryToLose
 
-implPart1 (line : lines) = playBingo tryToWin numbers boards
-  where
-    numbers = readNumbers line
-    boards = readBoards lines
-
-implPart2 (line : lines) = playBingo tryToLose numbers boards
+impl :: Strategy -> [String] -> RoundOutcome
+impl strategy (line : lines) = playBingo strategy numbers boards
   where
     numbers = readNumbers line
     boards = readBoards lines
