@@ -16,6 +16,9 @@ asCoordinateList = mapRows
     mapRows grid = withIndex grid >>= uncurry mapRow
     mapRow y = fmap (\(x, v) -> ((x, y), v)) . withIndex
 
+asMap :: Grid a -> Map Coordinates a
+asMap = fromList . asCoordinateList
+
 gridMap :: (a -> b) -> Grid a -> Grid b
 gridMap = fmap . fmap
 
