@@ -1,5 +1,4 @@
 import Common
-import Data.Functor
 
 -- Part 1
 result1 :: IO Int
