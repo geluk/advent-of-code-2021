@@ -1,21 +1,35 @@
+{-# LANGUAGE TupleSections #-}
+
 import Common (processDay, splitBy)
+import Data.List (sort)
+import Data.Map (Map, delete, elems, fromList, fromListWith, mapKeys, toList, union, (!?))
+import Data.Maybe (maybeToList)
 
-type Fish = Int
+type Count = Int
 
-result1 = processDay "06" $ implPart1 80
+type Generation = Int
 
-implPart1 :: Int -> [String] -> Int
-implPart1 days (l : _) = length $ runSimulation days $ readFish l
+type School = Map Generation Count
 
-readFish :: String -> [Fish]
-readFish = fmap read . splitBy ','
+result1 = processDay "06" $ impl 80
 
--- This naïve implementation works fine for part 1,
--- but will need to be revised for part 2.
-runSimulation :: Int -> [Fish] -> [Fish]
-runSimulation 0 fish = fish
-runSimulation x fish = runSimulation (x - 1) fish >>= simulateFish
+result2 = processDay "06" $ impl 256
 
-simulateFish :: Fish -> [Fish]
-simulateFish 0 = [6, 8]
-simulateFish x = [x - 1]
+impl :: Int -> [String] -> Int
+impl days = sum . elems . runSimulation days . readFish . head
+
+readFish :: String -> School
+readFish line = fromListWith (+) $ (,1) <$> ages line
+  where
+    ages = fmap read . splitBy ','
+
+runSimulation :: Int -> School -> School
+runSimulation 0 school = school
+runSimulation x school = runSimulation (x - 1) nextGeneration
+  where
+    shifted = mapKeys (subtract 1) school
+    parentCount = maybeToList $ shifted !? (-1)
+    parents = (6,) <$> parentCount
+    children = (8,) <$> parentCount
+    cleaned = toList . delete (-1) $ shifted
+    nextGeneration = fromListWith (+) (cleaned ++ parents ++ children)
