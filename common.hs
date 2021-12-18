@@ -38,22 +38,3 @@ splitBy delimiter = foldr f [[]]
     f c l@(x : xs)
       | c == delimiter = [] : l
       | otherwise = (c : x) : xs
-
--- List functions --
--- ============== --
-withIndex :: [a] -> [(Int, a)]
-withIndex = reverse . foldl f []
-  where
-    f [] x = [(0, x)]
-    f ((pi, px) : ts) x = (pi + 1, x) : (pi, px) : ts
-
--- Taken from Data.List.Extra
-(!?) :: [a] -> Int -> Maybe a
-xs !? n
-  | n < 0 = Nothing
-  | otherwise =
-    foldr f (const Nothing) xs n
-  where
-    f x r k = case k of
-      0 -> Just x
-      _ -> r (k - 1)

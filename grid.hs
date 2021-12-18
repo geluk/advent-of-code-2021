@@ -1,6 +1,5 @@
 module Grid where
 
-import Common (withIndex, (!?))
 import Control.Monad (join)
 import Data.List (elemIndices)
 import Data.Map (Map, fromList, fromListWith)
@@ -10,15 +9,6 @@ type Grid a = [[a]]
 
 type Coordinates = (Int, Int)
 
-asCoordinateList :: Grid a -> [(Coordinates, a)]
-asCoordinateList = mapRows
-  where
-    mapRows grid = withIndex grid >>= uncurry mapRow
-    mapRow y = fmap (\(x, v) -> ((x, y), v)) . withIndex
-
-asMap :: Grid a -> Map Coordinates a
-asMap = fromList . asCoordinateList
-
 gridMap :: (a -> b) -> Grid a -> Grid b
 gridMap = fmap . fmap
 
@@ -27,12 +17,6 @@ column x = fmap (!! x)
 
 row :: Int -> Grid a -> [a]
 row y grid = grid !! y
-
-(!!?) :: Grid a -> Coordinates -> Maybe a
-(!!?) grid (x, y) = grid !? y >>= (!? x)
-
-(!!!) :: Grid a -> Coordinates -> a
-(!!!) grid (x, y) = grid !! y !! x
 
 findFirstInGrid :: (Eq a) => a -> Grid a -> Maybe Coordinates
 findFirstInGrid x = listToMaybe . findInGrid x
