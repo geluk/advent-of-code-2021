@@ -1,7 +1,7 @@
 import Common
 import Control.Monad (msum)
 import Data.Char (isUpper)
-import Data.Map as Map (Map, empty, insertWith, member, (!), (!?))
+import Data.Map as Map (Map, empty, filterWithKey, insertWith, member, (!), (!?))
 import Data.Maybe (catMaybes, fromMaybe)
 import Data.Set as Set (Set, empty, insert, member, singleton, toList, union)
 
@@ -22,7 +22,6 @@ type TraversalCriteria = Seen -> Cave -> Bool
 
 result1 = processDay "12" $ countConnections strategy1 . buildGraph
 
--- TODO: this works, but it's way too slow.
 result2 = processDay "12" $ countConnections strategy2 . buildGraph
 
 countConnections :: TraversalCriteria -> CaveGraph -> Int
@@ -65,6 +64,18 @@ strategy2 :: TraversalCriteria
 strategy2 seen Start = not $ Start `Map.member` seen
 strategy2 _ End = False
 strategy2 _ (Big _) = True
-strategy2 seen cave = traversalCount < 2
+strategy2 seen cave = traversalCount < 1 || mayTraverseAgain
   where
     traversalCount = fromMaybe 0 $ seen !? cave
+    mayTraverseAgain = traversalCount < 2 && maxSmallCaveVisits < 2
+    maxSmallCaveVisits = maximumOr 0 . Map.filterWithKey isSmall $ seen
+    isSmall (Small _) _ = True
+    isSmall _ _ = False
+
+filterKeys :: (k -> Bool) -> Map k a -> Map k a
+filterKeys p = Map.filterWithKey (\k _ -> p k)
+
+maximumOr :: (Foldable t, Ord a) => a -> t a -> a
+maximumOr def t
+  | null t = def
+  | otherwise = maximum t
