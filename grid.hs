@@ -29,6 +29,3 @@ fp x [] _ = []
 fp x (row : rows) i = findInRow row ++ fp x rows (i + 1)
   where
     findInRow row = zip (elemIndices x row) (repeat i)
-
-toCoordinates :: Int -> Int -> Coordinates
-toCoordinates x y = (x, y)
