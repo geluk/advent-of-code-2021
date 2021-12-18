@@ -9,6 +9,18 @@ type Grid a = [[a]]
 
 type Coordinates = (Int, Int)
 
+asMap :: Grid a -> Map Coordinates a
+asMap = fromList . mapRows
+  where
+    mapRows grid = withIndex grid >>= uncurry mapRow
+    mapRow y = fmap (\(x, v) -> ((x, y), v)) . withIndex
+
+withIndex :: [a] -> [(Int, a)]
+withIndex = reverse . foldl f []
+  where
+    f [] x = [(0, x)]
+    f ((pi, px) : ts) x = (pi + 1, x) : (pi, px) : ts
+
 gridMap :: (a -> b) -> Grid a -> Grid b
 gridMap = fmap . fmap
 
