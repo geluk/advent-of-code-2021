@@ -24,10 +24,7 @@ isIncrease l r
 result2 = processDay "01" implPart2
 
 implPart2 :: [String] -> Int
-implPart2 = countAverageIncreases . fmap read
-
-countAverageIncreases :: [Int] -> Int
-countAverageIncreases = countIncreases . makeAverages
+implPart2 = countIncreases . makeAverages . fmap read
 
 makeAverages :: [Int] -> [Int]
 makeAverages depths = zipWith3 sumThree depths tdepths ttdepths
